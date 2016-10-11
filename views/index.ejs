@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.0/socket.io.min.js" charset="utf-8"></script>
+        <script>
+            $(document).ready(function() {
+                console.log('Document is ready.');
+                var socket = io.connect();
+
+                $('#survey_form').submit(function(e) {
+                    e.preventDefault();
+
+                    var data = {
+                        name: $('#name').val(),
+                        location: $('#location').val(),
+                        language: $('#language').val()
+                    }
+                    console.log(data);
+
+                    socket.emit('send_data', data.name);
+                })
+
+                socket.on('receive_data', function(data) {
+                    console.log('sockets data:',data);
+                    $('#data').html(data.split('<').join('&lt;'));
+                })
+            })
+        </script>
+    </head>
+    <body>
+        Index EJS file.
+        <div id="data"></div>
+        <form id="survey_form">
+            <input type="text" name="name" placeholder="Name" id="name">
+            <select name="location" id="location">
+                <option>San Jose</option>
+                <option>Seattle</option>
+            </select>
+            <select name="language" id="language">
+                <option>JavaScript</option>
+                <option>PHP</option>
+                <option>Python</option>
+            </select>
+
+            <input type="submit" value="Send">
+        </form>
+    </body>
+</html>
